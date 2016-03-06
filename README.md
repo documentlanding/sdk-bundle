@@ -35,7 +35,7 @@ virtual machine, go with this option.
 
 This is the recommended way to observe the SdkDemoBundle in action.
 
-[Setup SDK Demo with Vagrant + Ngrok](https://github.com/documentlanding/sdk-vagrant/README.md)
+[Setup SDK Demo with Vagrant + Ngrok](https://github.com/documentlanding/sdk-vagrant/blob/master/README.md)
 
 
 Getting Started: Option 2
@@ -65,7 +65,7 @@ composer.json
     ]
 ```
 
-[Post-Install Changes to AppKernel.php and config.yml](https://github.com/documentlanding/sdk-demo-project/README.md)
+[Post-Install Changes to AppKernel.php and config.yml](https://github.com/documentlanding/sdk-demo-project/blob/master/README.md)
 
 
 Customizing Fields and Validations
@@ -172,8 +172,8 @@ Customizing Event Listeners
 Event listeners are the recommended place to integrate with other systems
 (and the main reason this SDK exists).
 
-The Service SdkDemoBundle/Service/SdkDemoManager implements a listener function
-for all Events associated with the SDK.
+The Service DocumentLanding/SdkDemoBundle/Service/SdkDemoManager implements 
+a listener function for all Events associated with the SDK.
 
 
 Do Not Delete Lead Data
