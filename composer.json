@@ -1,0 +1,30 @@
+{
+    "name": "documentlanding/sdk-bundle",
+    "type": "symfony-bundle",
+    "description": "Document Landing SdkBundle",
+    "keywords": ["documentlanding"],
+    "homepage": "http://documentlanding.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bart Clarkson",
+            "email": "bart@documentlanding.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.9",
+        "symfony/form": "~2.3|~3.0",
+        "symfony/framework-bundle": "~2.3|~3.0",
+        "symfony/security-bundle": "~2.3|~3.0"
+    },
+    "require-dev": {
+        "doctrine/doctrine-bundle": "~1.3",
+        "swiftmailer/swiftmailer": "~4.3|~5",
+        "symfony/console": "~2.3|~3.0",
+        "symfony/validator": "~2.3|~3.0",
+        "symfony/yaml": "~2.3|~3.0"
+    },
+    "support": {
+        "docs": "https://github.com/documentlanding/sdk-demo-project"
+    }
+}

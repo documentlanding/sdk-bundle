@@ -1,0 +1,7 @@
+services:
+
+    documentlanding.sdk_manager:
+        class: DocumentLanding\SdkBundle\Service\SdkManager
+        arguments: [ %DocumentLandingSdk%, @event_dispatcher, %kernel.bundles%, %kernel.root_dir%, %kernel.environment%, @router ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onUrlParse }

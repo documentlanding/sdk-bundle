@@ -1,0 +1,238 @@
+SdkBundle\Entity\Lead:
+    type: entity
+    table: lead_sdk
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+    fields:
+        LastName:
+            type: string
+            length: 50
+            nullable: false
+            property: public
+        Email:
+            type: string
+            length: 60
+            nullable: false
+            property: public
+        Company:
+            type: string
+            length: 60
+            nullable: false
+            property: public
+        Description: 
+            type: text
+            length: 255
+            nullable: true
+            property: public
+        FirstName:
+            type: string
+            length: 50
+            nullable: true
+            property: public
+        Salutation:
+            type: string
+            length: 50
+            nullable: true
+            property: public
+            picklistValues:
+              - 
+                value: 'Mr.'
+                label: 'Mr.'
+                defaultValue: false
+                active: 1
+              - 
+                value: 'Mrs.'
+                label: 'Mrs.'
+                defaultValue: false
+                active: 1
+              - 
+                value: 'Miss'
+                label: 'Miss'
+                defaultValue: false
+                active: 1
+              - 
+                value: 'Ms.'
+                label: 'Ms.'
+                defaultValue: false
+                active: 1
+              - 
+                value: 'Dr.'
+                label: 'Dr.'
+                defaultValue: false
+                active: 1
+              - 
+                value: 'Prof.'
+                label: 'Prof.'
+                defaultValue: false
+                active: 1
+              - 
+                value: 'Rev.'
+                label: 'Rev.'
+                defaultValue: false
+                active: 1
+              - 
+                value: 'Other'
+                label: 'Other'
+                defaultValue: false
+                active: 1              
+        Name:
+            type: string
+            length: 120
+            nullable: true
+            property: public
+        Title:
+            type: string
+            length: 50
+            nullable: true
+            property: public
+        City:
+            type: string
+            length: 100
+            nullable: true
+            property: public
+        State:
+            type: string
+            length: 50
+            nullable: true
+            property: public
+        PostalCode:
+            type: string
+            length: 15
+            nullable: true
+            property: public
+        Country:
+            type: string
+            length: 50
+            nullable: true
+            property: public
+        Phone:
+            type: string
+            length: 20
+            nullable: true
+            property: public
+        MobilePhone:
+            type: string
+            length: 20
+            nullable: true
+            property: public
+        Fax:
+            type: string
+            length: 20
+            nullable: true
+            property: public
+        Website:
+            type: string
+            length: 60
+            nullable: true
+            property: public
+        Industry:
+            type: string
+            length: 30
+            nullable: true
+            property: public
+        AnnualRevenue:
+            type: string
+            length: 20
+            nullable: true
+            property: public
+        LeadSource:
+            type: string
+            length: 255
+            nullable: true
+            property: public
+        IsConverted: 
+            type: boolean
+            nullable: true
+            options:
+                default: 0
+            property: private
+        IsDeleted: 
+            type: boolean
+            nullable: true
+            options:
+                default: 0
+            property: private
+        CreatedDate:
+            type: datetime
+            nullable: true
+            property: private
+            default: CREATED_DATETIME
+        LastModifiedDate:
+            type: datetime
+            nullable: true
+            property: private
+            default: UPDATED_DATETIME
+        MasterRecordId:
+            type: integer
+            nullable: true
+            property: private
+        Status:
+            type: string
+            length: 30
+            nullable: true
+            property: private
+        Rating:
+            type: string
+            length: 15
+            nullable: true
+            property: private
+        OwnerId:
+            type: integer
+            nullable: true
+            property: private
+        ConvertedDate:
+            type: datetime
+            nullable: true
+            property: private
+        ConvertedAccountId:
+            type: integer
+            nullable: true
+            property: private
+        ConvertedContactId:
+            type: integer
+            nullable: true
+            property: private
+        ConvertedOpportunityId:
+            type: integer
+            nullable: true
+            property: private
+        IsUnreadByOwner: 
+            type: boolean
+            nullable: true
+            options:
+                default: 0
+            property: private
+        CreatedById:
+            type: integer
+            nullable: true
+            property: private
+        LastModifiedById:
+            type: integer
+            nullable: true
+            property: private
+        SystemModstamp:
+            type: integer
+            nullable: true
+            property: private
+        LastActivityDate:
+            type: datetime
+            nullable: true
+            property: private
+        Jigsaw:
+            type: string
+            nullable: true
+            property: private
+        JigsawContactId:
+            type: integer
+            nullable: true
+            property: private
+        EmailBouncedReason:
+            type: string
+            nullable: true
+            property: private
+        EmailBouncedDate:
+            type: datetime
+            nullable: true
+            property: private

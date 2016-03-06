@@ -1,0 +1,2 @@
+Directory used by Lead.orm.yml when lead class is not statically 
+defined by implementing developer.
