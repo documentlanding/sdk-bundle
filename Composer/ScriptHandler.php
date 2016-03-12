@@ -22,7 +22,7 @@ class ScriptHandler
         $options = self::getOptions($event);
         $appDir = $options['symfony-app-dir'];
 
-        static::executeCommand($event, $appDir, 'documentlanding:installSdkRequirements ' . escapeshellarg($appDir) . ' ' . escapeshellarg(__DIR__));
+        static::executeCommand($event, $appDir, 'documentlanding:installSdkRequirements ' . escapeshellarg($appDir) . ' ' . escapeshellarg(__DIR__ . '/..'));
     }
 
 

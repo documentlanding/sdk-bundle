@@ -66,6 +66,9 @@ composer.json
     "scripts": {
         "post-install-cmd": [
             "DocumentLanding\\SdkBundle\\Composer\\ScriptHandler::installSdkRequirements"
+        ],
+        "post-update-cmd": [
+            "DocumentLanding\\SdkBundle\\Composer\\ScriptHandler::installSdkRequirements"
         ]
     }
 ```
