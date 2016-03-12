@@ -34,13 +34,23 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
 
 	    // $setupAcl is presently unimplemented.
 	    // Will wait for client demand or additional input to make the case.
+	    
+	    $output->writeln('Document Landing SDK: Installing Requirements');
 
 	    if (!is_dir($target)) {
+		    $output->writeln('Document Landing SDK: Creating Target Directory');
 		    mkdir($target, 0777, true);
+		}
+		else {
+			$output->writeln('Document Landing SDK: Target Directory Already Exists');
 		}
 
 	    if (!is_dir($symlink)) {
+		    $output->writeln('Creating Document Landing SDK Symlink');
 		    symlink($target, $symlink);
+	    }
+	    else {
+		    $output->writeln('Document Landing SDK: Symlink Already Exists');
 	    }
 
     }

@@ -62,7 +62,12 @@ composer.json
             "type": "git",
             "url": "https://github.com/documentlanding/sdk-demo-bundle.git"
         }
-    ]
+    ],
+    "scripts": {
+        "post-install-cmd": [
+            "DocumentLanding\\SdkBundle\\Composer\\ScriptHandler::installSdkRequirements"
+        ]
+    }
 ```
 
 app/config/config.yml
