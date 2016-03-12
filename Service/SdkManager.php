@@ -64,7 +64,7 @@ class SdkManager
             );
             
             $entity_dir = __DIR__ . '/../Entity';
-            if (!is_dir($entity_dir)) {
+            if (!is_dir($entity_dir) && !is_link($entity_dir)) {
                 mkdir($entity_dir, 0775, true);
             }
             
