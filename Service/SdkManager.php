@@ -374,8 +374,7 @@ class SdkManager
         $entityClass = $this->config['lead_class'];
         $bundles = $this->bundles;
     
-        foreach($bundles as $name=>$bundle){
-            $bundleClass = get_class($bundle);
+        foreach($bundles as $name=>$bundleClass){
             $matchEntityClass = substr($entityClass,0,strpos($entityClass,'\\Entity\\'));
             if(strpos($bundleClass,$matchEntityClass) === false){
                 // Must deal with strpos ambiguity one way or another...
@@ -385,6 +384,7 @@ class SdkManager
                 break;
             }
         }
+        
         return $this->bundleName;
     }
 

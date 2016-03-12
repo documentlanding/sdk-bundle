@@ -65,7 +65,35 @@ composer.json
     ]
 ```
 
-[Post-Install Changes to AppKernel.php and config.yml](https://github.com/documentlanding/sdk-demo-project/blob/master/README.md)
+app/config/config.yml
+---------------------
+```
+sdk:
+    api_key: ThisTokenIsNotSoSecretChangeIt
+    lead_class: ~
+    # lead_class: DocumentLanding\SdkDemoBundle\Entity\Lead
+    receipt_email: ~
+    audit: ~
+```
+
+app/config/routing.yml
+----------------------
+```
+documentlanding_sdk:
+    resource: "@SdkBundle/Controller/"
+    type:     annotation
+
+documentlanding_sdk_demo:
+    resource: "@SdkDemoBundle/Controller/"
+    type:     annotation
+```
+
+app/AppKernel.php
+-----------------
+```php
+    new DocumentLanding\SdkBundle\SdkBundle(),
+    new DocumentLanding\SdkDemoBundle\SdkDemoBundle()
+```
 
 
 Customizing Fields and Validations

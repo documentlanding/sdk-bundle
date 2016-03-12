@@ -29,5 +29,10 @@
     },
     "support": {
         "docs": "https://github.com/documentlanding/sdk-demo-project"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "DocumentLanding\\SdkBundle\\Composer\\ScriptHandler::installSdkRequirements"
+        ]
     }
 }
