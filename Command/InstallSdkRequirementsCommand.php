@@ -29,28 +29,57 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
 	    $bundleDir = $input->getArgument('bundle_dir');
 	    $setupAcl = $input->getArgument('setup_acl');
 
-	    $target = $appDir . '/Resources/DocumentLanding/sdk-bundle/Entity';
-	    $symlink = $bundleDir . '/Entity';
-
 	    // $setupAcl is presently unimplemented.
 	    // Will wait for client demand or additional input to make the case.
 	    
 	    $output->writeln('Document Landing SDK: Installing Requirements');
 
+
+        /**
+	     * Symlink Entity Folder
+	     */
+
+	    $target = $appDir . '/Resources/DocumentLanding/sdk-bundle/Entity';
+	    $symlink = $bundleDir . '/Entity';
+	     
 	    if (!is_dir($target)) {
-		    $output->writeln('Document Landing SDK: Creating Target Directory');
+		    $output->writeln('Document Landing SDK: Creating Entity Target Directory');
 		    mkdir($target, 0777, true);
 		}
 		else {
-			$output->writeln('Document Landing SDK: Target Directory Already Exists');
+			$output->writeln('Document Landing SDK: Target Entity Directory Already Exists');
 		}
 
 	    if (!is_dir($symlink) && !is_link($symlink)) {
-		    $output->writeln('Creating Document Landing SDK Symlink');
+		    $output->writeln('Creating Document Landing SDK Entity Symlink');
 		    symlink($target, $symlink);
 	    }
 	    else {
-		    $output->writeln('Document Landing SDK: Symlink Already Exists');
+		    $output->writeln('Document Landing SDK: Entity Symlink Already Exists');
+	    }
+
+
+        /**
+	     * Symlink Doctrine Folder
+	     */
+
+	    $target = $appDir . '/Resources/DocumentLanding/sdk-bundle/Resources/config/doctrine';
+	    $symlink = $bundleDir . '/Resources/config/doctrine';
+	    
+	    if (!is_dir($target)) {
+		    $output->writeln('Document Landing SDK: Creating Doctrine Target Directory');
+		    mkdir($target, 0777, true);
+		}
+		else {
+			$output->writeln('Document Landing SDK: Target Doctrine Directory Already Exists');
+		}
+
+	    if (!is_dir($symlink) && !is_link($symlink)) {
+		    $output->writeln('Creating Document Landing SDK Doctrine Symlink');
+		    symlink($target, $symlink);
+	    }
+	    else {
+		    $output->writeln('Document Landing SDK: Doctrine Symlink Already Exists');
 	    }
 
     }
