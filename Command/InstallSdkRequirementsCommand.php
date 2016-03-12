@@ -45,7 +45,7 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
 			$output->writeln('Document Landing SDK: Target Directory Already Exists');
 		}
 
-	    if (!is_dir($symlink)) {
+	    if (!is_dir($symlink) && !is_link($symlink)) {
 		    $output->writeln('Creating Document Landing SDK Symlink');
 		    symlink($target, $symlink);
 	    }
