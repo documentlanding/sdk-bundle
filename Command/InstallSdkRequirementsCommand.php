@@ -16,7 +16,6 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
         $this
             ->setName('documentlanding:installSdkRequirements')
             ->setDescription('Creates Folder and Symlink for Dynamic Entity')
-            ->addArgument('app_dir', InputArgument::REQUIRED, 'App Directory')
             ->addArgument('bundle_dir', InputArgument::REQUIRED, 'SdkBundle Directory')
             ->addArgument('setup_acl', InputArgument::OPTIONAL, '[Unimplemented] Create Target with multi-user ACL rather than 0777')
         ;
@@ -25,15 +24,14 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-//      $appDir = $input->getArgument('app_dir');
+        $appDir = $container->get('kernel')->getRootDir();
         $bundleDir = $input->getArgument('bundle_dir');
         $setupAcl = $input->getArgument('setup_acl');
 
-        // Symlinks don't work right with absolute path.  Don't know why.
-        $appDir = $container->get('kernel')->getRootDir();
-
         // $setupAcl is presently unimplemented.
         // Will wait for client demand or additional input to make the case.
+        // There is plenty of room for overarching improvement.
+        // Meanwhile we whack it with a big hammer.
         
         $output->writeln('Document Landing SDK: Installing Requirements');
 
