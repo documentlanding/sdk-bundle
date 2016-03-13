@@ -1,5 +1,5 @@
 <?php
-	
+    
 namespace DocumentLanding\SdkBundle\Model;
 
 interface LeadInterface

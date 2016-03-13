@@ -13,7 +13,7 @@ class SdkExtension extends Extension
 
     /**
      * {@inheritDoc}
-     */	
+     */ 
     public function load(array $configs, ContainerBuilder $container)
     {
         $processor     = new Processor();

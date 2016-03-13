@@ -16,7 +16,7 @@ class PostUpdateSchemaEvent extends Event
     }
 
     public function getLeadClass() {
-	    return $this->leadClass;
+        return $this->leadClass;
     }
 
 }

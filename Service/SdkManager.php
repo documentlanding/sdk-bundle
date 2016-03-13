@@ -1,5 +1,5 @@
 <?php
-	
+    
 namespace DocumentLanding\SdkBundle\Service;
 
 use DocumentLanding\SdkBundle\DocumentLandingSdkBundleEvents;
@@ -26,41 +26,41 @@ class SdkManager
 
     public function __construct($SdkBundleConfig, EventDispatcherInterface $eventDispatcher, $bundles, $rootDir, $env, RouterInterface $router)
     {
-	    $this->config = $SdkBundleConfig;
-	    $this->eventDispatcher = $eventDispatcher;
-	    $this->bundles = $bundles;
-	    $this->rootDir = $rootDir;
-	    $this->env = $env;
-	    $this->router = $router;
+        $this->config = $SdkBundleConfig;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->bundles = $bundles;
+        $this->rootDir = $rootDir;
+        $this->env = $env;
+        $this->router = $router;
     }
 
     public function getLeadClass()
     {
-	    if ($this->leadClass) {
-		    return $this->leadClass;
-	    }
-	    if (!$this->config['lead_class']) {
-		    $this->leadClass = 'DocumentLanding\SdkBundle\Entity\Lead';
+        if ($this->leadClass) {
+            return $this->leadClass;
+        }
+        if (!$this->config['lead_class']) {
+            $this->leadClass = 'DocumentLanding\SdkBundle\Entity\Lead';
             if (!class_exists($this->leadClass)) {
-	            $this->setLeadSchema(null);
+                $this->setLeadSchema(null);
             }
-	    }
-	    else {
-		    $this->leadClass = $this->config['lead_class'];
-	    }
-	    return $this->leadClass;
+        }
+        else {
+            $this->leadClass = $this->config['lead_class'];
+        }
+        return $this->leadClass;
     }
 
     public function setLeadSchema($data = null)
     {
 
-	    if (!$data) {
+        if (!$data) {
 
             $array = array(
                 'lead' => array(
                     'src' => __DIR__ . '/../Resources/init/Lead.orm.yml',
                     'dst' => __DIR__ . '/../Resources/config/doctrine/Lead.orm.yml',
-            	),
+                ),
             );
             
             $entity_dir = __DIR__ . '/../Entity';
@@ -82,16 +82,16 @@ class SdkManager
                 }
             }
 
-		    $yaml = new Parser();
-		    $array = $yaml->parse(file_get_contents(__DIR__ . '/../Resources/config/doctrine/Lead.orm.yml'));
-		    $data = $array['SdkBundle\Entity\Lead'];
+            $yaml = new Parser();
+            $array = $yaml->parse(file_get_contents(__DIR__ . '/../Resources/config/doctrine/Lead.orm.yml'));
+            $data = $array['SdkBundle\Entity\Lead'];
 
-	    }
+        }
 
 
-	    $fieldsArray                 = array();
-	    $fieldChoiceArray            = array();
-	    $translationArray            = array();
+        $fieldsArray                 = array();
+        $fieldChoiceArray            = array();
+        $translationArray            = array();
         $translationArray['choices'] = array();
 
         $prePersistPhp = '';
@@ -102,52 +102,52 @@ class SdkManager
         $defaultLength = 60;
 
         if (isset($data['urlDetail']) && strpos($data['urlDetail'], 'salesforce.com') !== false) {
-	        $isSalesforce = true;
-	        $privateProperties = $this->getSalesforcePrivateLeadFields();
-	        // Set the CreatedAt etc.
+            $isSalesforce = true;
+            $privateProperties = $this->getSalesforcePrivateLeadFields();
+            // Set the CreatedAt etc.
         }
-	    if (isset($data['fields']) && is_array($data['fields'])) {
-		    foreach($data['fields'] as $name=>$field) {
-			    if (isset($field['nillable'])) {
-				    $field['nullable'] = $field['nillable'];
-			    }
-			    elseif (!isset($field['nullable'])) {
-				    $field['nullable'] = true;
-			    }
-			    if (!isset($field['property'])) {
+        if (isset($data['fields']) && is_array($data['fields'])) {
+            foreach($data['fields'] as $name=>$field) {
+                if (isset($field['nillable'])) {
+                    $field['nullable'] = $field['nillable'];
+                }
+                elseif (!isset($field['nullable'])) {
+                    $field['nullable'] = true;
+                }
+                if (!isset($field['property'])) {
                     if (isset($privateProperties[$name])) {
                         $field['property'] = 'private';
                     }
                     else {
-	                    $field['property'] = 'protected';
+                        $field['property'] = 'protected';
                     }
-			    }
-			    if (!isset($field['length'])) {
-				    $field['length'] = $defaultLength;
-			    }
+                }
+                if (!isset($field['length'])) {
+                    $field['length'] = $defaultLength;
+                }
 
-			    $fieldsArray[$name] = array(
-				    'type' => (in_array($field['type'], array('string', 'text', 'boolean', 'datetime')) ? $field['type'] : 'string'),
-				    'length' => (is_numeric($field['length']) ? $field['length'] : 60),
-				    'nullable' => ($field['nullable'] ? true : false),
-				    'property' => (in_array($field['property'], array('public', 'protected')) ? $field['property'] : 'private'),
-			    );
-			    if (isset($field['label'])) {
-				    $translationArray[$name] = $field['label'];
-			    }
-			    if (isset($field['picklistValues']) && is_array($field['picklistValues'])) {
-				    $choiceArray = array();
-				    foreach($field['picklistValues'] as $key=>$value){
-					    if (isset($value['active'])) {
-						    if ($value['active'] == 0) {
-							    continue;
-						    }
-					    }
+                $fieldsArray[$name] = array(
+                    'type' => (in_array($field['type'], array('string', 'text', 'boolean', 'datetime')) ? $field['type'] : 'string'),
+                    'length' => (is_numeric($field['length']) ? $field['length'] : 60),
+                    'nullable' => ($field['nullable'] ? true : false),
+                    'property' => (in_array($field['property'], array('public', 'protected')) ? $field['property'] : 'private'),
+                );
+                if (isset($field['label'])) {
+                    $translationArray[$name] = $field['label'];
+                }
+                if (isset($field['picklistValues']) && is_array($field['picklistValues'])) {
+                    $choiceArray = array();
+                    foreach($field['picklistValues'] as $key=>$value){
+                        if (isset($value['active'])) {
+                            if ($value['active'] == 0) {
+                                continue;
+                            }
+                        }
                         if (!isset($value['value']) || !isset($value['label'])) {
-	                        continue;
+                            continue;
                         }
                         $choiceArray[$value['value']] = $value['label']; // $value['value']
-				    }
+                    }
 
                     $fieldChoiceArray[$name] = array(
                         array(
@@ -156,76 +156,76 @@ class SdkManager
                             )
                         )
                     );
-			    }
-			    if (isset($field['default'])) {
-				    if ($field['type'] == 'datetime') {
-					    if ($field['default'] == 'CREATED_DATETIME') {
-						    $prePersistPhp .= '$this->' . $name . ' = new \DateTime("now"); ';
-					    }
-					    if ($field['default'] == 'UPDATED_DATETIME') {
-						    $preUpdatePhp .= '$this->' . $name . ' = new \DateTime("now"); ';
-					    }
-				    }
-				}
-		    }
-	    }
-	    else {
-		    return array('success' => false, 'error' => 'Field array missing.');
-	    }
+                }
+                if (isset($field['default'])) {
+                    if ($field['type'] == 'datetime') {
+                        if ($field['default'] == 'CREATED_DATETIME') {
+                            $prePersistPhp .= '$this->' . $name . ' = new \DateTime("now"); ';
+                        }
+                        if ($field['default'] == 'UPDATED_DATETIME') {
+                            $preUpdatePhp .= '$this->' . $name . ' = new \DateTime("now"); ';
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            return array('success' => false, 'error' => 'Field array missing.');
+        }
 
-	    $bundleName = $this->getBundleName();
+        $bundleName = $this->getBundleName();
 
-	    if ($bundleName != 'SdkBundle') {
-		    return array('success' => false, 'error' => 'SDK configured to use static lead class.');
-	    }
+        if ($bundleName != 'SdkBundle') {
+            return array('success' => false, 'error' => 'SDK configured to use static lead class.');
+        }
 
-	    $leadClass = 'DocumentLanding\SdkBundle\Entity\Lead';
+        $leadClass = 'DocumentLanding\SdkBundle\Entity\Lead';
         $dumper = new Dumper();
         
         // Ensure implementation of DocumentLanding\SdkBundle\Model\LeadInterface
 
         if (!isset($fieldsArray['Email'])) {
-	        $fieldsArray['Email'] = array(
-			    'type' => 'string',
-			    'length' => 255,
-			    'nullable' => false,
-			    'property' => 'public',
-			);
+            $fieldsArray['Email'] = array(
+                'type' => 'string',
+                'length' => 255,
+                'nullable' => false,
+                'property' => 'public',
+            );
         }
 
         if (!isset($fieldsArray['LeadSource'])) {
-	        $fieldsArray['LeadSource'] = array(
-			    'type' => 'string',
-			    'length' => 255,
-			    'nullable' => true,
-			    'property' => 'protected',
-			);
+            $fieldsArray['LeadSource'] = array(
+                'type' => 'string',
+                'length' => 255,
+                'nullable' => true,
+                'property' => 'protected',
+            );
         }
 
         if (!isset($fieldsArray['Description'])) {
-	        $fieldsArray['Description'] = array(
-			    'type' => 'string',
-			    'length' => 255,
-			    'nullable' => true,
-			    'property' => 'private',
-			);
+            $fieldsArray['Description'] = array(
+                'type' => 'string',
+                'length' => 255,
+                'nullable' => true,
+                'property' => 'private',
+            );
         }
 
         // Entity
         // Lifecycle callbacks in the YAML easiest method to generate relavent assertion annotation at top of class.
         // These lifecycle methods themselves do nothing.
 
-	    $entityArray = array(
-		    $leadClass => array(
-			    'type' => 'entity',
-			    'table' => 'lead',
+        $entityArray = array(
+            $leadClass => array(
+                'type' => 'entity',
+                'table' => 'lead',
                 'id' => array('id' => array('type' => 'integer', 'generator' => array('strategy' => 'AUTO'))),
                 'fields' => $fieldsArray,
                 'lifecycleCallbacks' => array(
-	                'prePersist' => array( 'onPrePersist' ),
-	                'preUpdate' => array( 'onPreUpdate' ),
+                    'prePersist' => array( 'onPrePersist' ),
+                    'preUpdate' => array( 'onPreUpdate' ),
                 )
-		    )
+            )
         );
 
 
@@ -235,77 +235,77 @@ class SdkManager
         file_put_contents(__DIR__ . '/../Resources/config/doctrine/Lead.orm.yml', $yaml);
 
 
-	    // Choices
+        // Choices
 
-	    $validation_array = array(
-		    $leadClass => array(
+        $validation_array = array(
+            $leadClass => array(
                 'properties' => $fieldChoiceArray
-		    )
+            )
         );
 
         $yaml = $dumper->dump($validation_array, 6);
         file_put_contents(__DIR__ . '/../Resources/config/validation.yml', $yaml);
 
 
-	    // Translation
-	    
-	    $translationArray = array(
-		    'lead' => $translationArray
+        // Translation
+        
+        $translationArray = array(
+            'lead' => $translationArray
         );
 
         $yaml = $dumper->dump($translationArray, 2);
         file_put_contents(__DIR__ . '/../Resources/translations/SdkBundle.en.yml', $yaml);
 
 
-	    // Clear Cache
-	    
-	    $consolePath = $this->rootDir . '/console';
-	    $base = PHP_BINDIR . '/php ' . $consolePath . ' ';
-	    $env = $this->env;
+        // Clear Cache
+        
+        $consolePath = $this->rootDir . '/console';
+        $base = PHP_BINDIR . '/php ' . $consolePath . ' ';
+        $env = $this->env;
 
 //        $command = $base . 'cache:clear --env=' . $env;
 //        $process = new Process($command);
 //        $process->run();
 //        if (!$process->isSuccessful()) {
-//	        return array('success' => false, 'error' => $process->getErrorOutput());
+//          return array('success' => false, 'error' => $process->getErrorOutput());
 //        }
   
  
 
-	    // Generate Entity
+        // Generate Entity
 
         $command = $base . 'cache:clear --env=' . $env;
         $process = new Process($command);
         $process->run();
         if (!$process->isSuccessful()) {
-	        return array('success' => false, 'error' => $process->getErrorOutput());
+            return array('success' => false, 'error' => $process->getErrorOutput());
         }
 
         $command = $base . 'generate:doctrine:entities DocumentLanding/' . $this->getBundleName() . ' --path ' . $this->rootDir . '/Resources';
         $process = new Process($command);
         $process->run();
         if (!$process->isSuccessful()) {
-	        return array('success' => false, 'error' => $process->getErrorOutput());
+            return array('success' => false, 'error' => $process->getErrorOutput());
         }
 
-	    // Modify Generated Entity
-	    //   Switch certain private properties to public/protected
-	    //   Add LifeCycle callbacks for default values (created, updated, etc)
-	    //   Ensure implements LeadInterface
-	    
-	    $classContent = file_get_contents(__DIR__ . '/../Entity/Lead.php');
+        // Modify Generated Entity
+        //   Switch certain private properties to public/protected
+        //   Add LifeCycle callbacks for default values (created, updated, etc)
+        //   Ensure implements LeadInterface
+        
+        $classContent = file_get_contents(__DIR__ . '/../Entity/Lead.php');
         
         foreach($fieldsArray as $name=>$field){
-	        if (isset($field['property']) && $field['property'] != 'private') {
-		        $classContent = str_replace('private $' . $name . ';', $field['property'] . ' $' . $name . ';', $classContent);
-	        }
+            if (isset($field['property']) && $field['property'] != 'private') {
+                $classContent = str_replace('private $' . $name . ';', $field['property'] . ' $' . $name . ';', $classContent);
+            }
         }
         
         $pos = strrpos($classContent, 'onPrePersistAppend');
         
         if (!$pos) {
 
-	        $pos = strrpos($classContent, '}');
+            $pos = strrpos($classContent, '}');
             $classContent = substr_replace($classContent, '', $pos, strlen('}'));
             $classContent .= '
 
@@ -332,19 +332,19 @@ class SdkManager
         $pos = strrpos($classContent, 'implements \DocumentLanding\SdkBundle\Model\LeadInterface');
 
         if (!$pos) {
-	        $classContent = str_replace('class Lead', 'class Lead implements \DocumentLanding\SdkBundle\Model\LeadInterface', $classContent);
-	    }
+            $classContent = str_replace('class Lead', 'class Lead implements \DocumentLanding\SdkBundle\Model\LeadInterface', $classContent);
+        }
 
         file_put_contents(__DIR__ . '/../Entity/Lead.php', $classContent);
 
 
-	    // Autoload won't be aware of the Lead Entity class until the next page load.
-	    // So jam it into the current run-time.
-	    // Otherwise $this->getConstraint(...); fails further down this thread.
-	    include_once __DIR__ . '/../Entity/Lead.php';
-	    
+        // Autoload won't be aware of the Lead Entity class until the next page load.
+        // So jam it into the current run-time.
+        // Otherwise $this->getConstraint(...); fails further down this thread.
+        include_once __DIR__ . '/../Entity/Lead.php';
+        
 
-	    // Update Schema       
+        // Update Schema       
         
         $command = $base . 'doctrine:schema:update --force';
         $process = new Process($command);
@@ -358,18 +358,18 @@ class SdkManager
         
         return array('success' => true);
 
-	}
+    }
 
     public function getBundleName()
     {
-	    if ($this->bundleName) {
-		    return $this->bundleName;
-	    }
-	    
-	    if (!$this->config['lead_class']) {
-		    $this->bundleName = 'SdkBundle';
-		    return $this->bundleName;
-	    }
+        if ($this->bundleName) {
+            return $this->bundleName;
+        }
+        
+        if (!$this->config['lead_class']) {
+            $this->bundleName = 'SdkBundle';
+            return $this->bundleName;
+        }
 
         $entityClass = $this->config['lead_class'];
         $bundles = $this->bundles;
@@ -389,8 +389,8 @@ class SdkManager
     }
 
     /**
-	 * Salesforce Fields not (directly) used by Document Landing Smart Gates.
-	 */
+     * Salesforce Fields not (directly) used by Document Landing Smart Gates.
+     */
     public function getSalesforcePrivateLeadFields()
     {
 
@@ -424,20 +424,20 @@ class SdkManager
 
 
     /*
-	 * Two reasons for this page.
-	 * One, welcome! It all worked out. You are a-ok.
-	 * Two, new Constraint Metadata is missing until refresh.
-	 */
+     * Two reasons for this page.
+     * One, welcome! It all worked out. You are a-ok.
+     * Two, new Constraint Metadata is missing until refresh.
+     */
     public function onUrlParse(GetResponseEvent $event)
     {
-	    if (!$this->config['lead_class']) {
-		    $this->leadClass = 'DocumentLanding\SdkBundle\Entity\Lead';
+        if (!$this->config['lead_class']) {
+            $this->leadClass = 'DocumentLanding\SdkBundle\Entity\Lead';
             if (!class_exists($this->leadClass)) {
-	            $this->setLeadSchema(null);
-	            $response = new RedirectResponse($this->router->generate('config_success', array(), true));
+                $this->setLeadSchema(null);
+                $response = new RedirectResponse($this->router->generate('config_success', array(), true));
                 $event->setResponse($response);
             }
-	    }
+        }
     }
 
 

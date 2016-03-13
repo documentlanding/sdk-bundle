@@ -18,7 +18,7 @@ class ApiRequestEvent extends Event
     }
 
     public function getRequest() {
-	    return $this->request;
+        return $this->request;
     }
 
     public function setIsValid($isValid)

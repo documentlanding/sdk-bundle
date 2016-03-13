@@ -24,12 +24,12 @@ class NewLeadEvent extends Event
 
     public function getDataSource()
     {
-	    return $this->data['Source'];
+        return $this->data['Source'];
     }
 
     public function getData()
     {
-	    return $this->data;
+        return $this->data;
     }
 
 }

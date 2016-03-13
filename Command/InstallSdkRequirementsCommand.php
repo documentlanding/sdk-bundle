@@ -24,111 +24,111 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-	    $container = $this->getContainer();
-//	    $appDir = $input->getArgument('app_dir');
-	    $bundleDir = $input->getArgument('bundle_dir');
-	    $setupAcl = $input->getArgument('setup_acl');
+        $container = $this->getContainer();
+//      $appDir = $input->getArgument('app_dir');
+        $bundleDir = $input->getArgument('bundle_dir');
+        $setupAcl = $input->getArgument('setup_acl');
 
         // Symlinks don't work right with absolute path.  Don't know why.
-	    $appDir = $container->get('kernel')->getRootDir();
+        $appDir = $container->get('kernel')->getRootDir();
 
-	    // $setupAcl is presently unimplemented.
-	    // Will wait for client demand or additional input to make the case.
-	    
-	    $output->writeln('Document Landing SDK: Installing Requirements');
-
-
-        /**
-	     * Symlink Entity Folder
-	     */
-
-	    $target = $appDir . '/Resources/DocumentLanding/SdkBundle/Entity';
-	    $symlink = $bundleDir . '/../Entity';
-	     
-	    if (!is_dir($target)) {
-		    $output->writeln('Document Landing SDK: Creating Entity Target Directory');
-		    mkdir($target, 0777, true);
-		}
-		else {
-			$output->writeln('Document Landing SDK: Target Entity Directory Already Exists');
-		}
-
-	    if (!is_link($symlink)) {
-		    $output->writeln('Creating Document Landing SDK Entity Symlink');
-		    @symlink($target, $symlink);
-	    }
-	    else {
-		    $output->writeln('Document Landing SDK: Entity Symlink Already Exists');
-	    }
-
-	    chmod($symlink, 0777);
+        // $setupAcl is presently unimplemented.
+        // Will wait for client demand or additional input to make the case.
+        
+        $output->writeln('Document Landing SDK: Installing Requirements');
 
 
         /**
-	     * Symlink Config Folder
-	     */
+         * Symlink Entity Folder
+         */
 
-	    $target = $appDir . '/Resources/DocumentLanding/SdkBundle/Resources/config';
-	    $symlink = $bundleDir . '/../Resources/config';
-	    
-	    if (!is_dir($target)) {
-		    $output->writeln('Document Landing SDK: Creating Config Target Directory');
-		    mkdir($target, 0777, true);
-		}
-		else {
-			$output->writeln('Document Landing SDK: Target Config Directory Already Exists');
-		}
-		
-	    if (!is_link($symlink)) {
-		    $output->writeln('Document Landing SDK: Creating Config Symlink');
-		    symlink($target, $symlink);
-	    }
-	    else {
-		    $output->writeln('Document Landing SDK: Config Symlink Already Exists');
-	    }
+        $target = $appDir . '/Resources/DocumentLanding/SdkBundle/Entity';
+        $symlink = $bundleDir . '/../Entity';
+         
+        if (!is_dir($target)) {
+            $output->writeln('Document Landing SDK: Creating Entity Target Directory');
+            mkdir($target, 0777, true);
+        }
+        else {
+            $output->writeln('Document Landing SDK: Target Entity Directory Already Exists');
+        }
 
-	    chmod($symlink, 0777);
+        if (!is_link($symlink)) {
+            $output->writeln('Creating Document Landing SDK Entity Symlink');
+            @symlink($target, $symlink);
+        }
+        else {
+            $output->writeln('Document Landing SDK: Entity Symlink Already Exists');
+        }
 
-        /**
-	     * Add Doctrine to Config Folder
-	     */
-	    
-	    $target = $target . '/doctrine';
-	    
-	    if (!is_dir($target)) {
-		    $output->writeln('Document Landing SDK: Creating Doctrine Directory');
-		    mkdir($target, 0777, true);
-		}
-		else {
-			$output->writeln('Document Landing SDK: Doctrine Directory Already Exists');
-		}
+        chmod($symlink, 0777);
 
-	    chmod($target, 0777);
 
         /**
-	     * Symlink Translations Folder
-	     */
+         * Symlink Config Folder
+         */
 
-	    $target = $appDir . '/Resources/DocumentLanding/SdkBundle/Resources/translations';
-	    $symlink = $bundleDir . '/../Resources/translations';
-	    
-	    if (!is_dir($target)) {
-		    $output->writeln('Document Landing SDK: Creating Translations Target Directory');
-		    mkdir($target, 0777, true);
-		}
-		else {
-			$output->writeln('Document Landing SDK: Target Translations Directory Already Exists');
-		}
-		
-	    if (!is_link($symlink)) {
-		    $output->writeln('Document Landing SDK: Creating Translations Symlink');
-		    @symlink($target, $symlink);
-	    }
-	    else {
-		    $output->writeln('Document Landing SDK: Translations Symlink Already Exists');
-	    }
+        $target = $appDir . '/Resources/DocumentLanding/SdkBundle/Resources/config';
+        $symlink = $bundleDir . '/../Resources/config';
+        
+        if (!is_dir($target)) {
+            $output->writeln('Document Landing SDK: Creating Config Target Directory');
+            mkdir($target, 0777, true);
+        }
+        else {
+            $output->writeln('Document Landing SDK: Target Config Directory Already Exists');
+        }
+        
+        if (!is_link($symlink)) {
+            $output->writeln('Document Landing SDK: Creating Config Symlink');
+            symlink($target, $symlink);
+        }
+        else {
+            $output->writeln('Document Landing SDK: Config Symlink Already Exists');
+        }
 
-	    chmod($symlink, 0777);
+        chmod($symlink, 0777);
+
+        /**
+         * Add Doctrine to Config Folder
+         */
+        
+        $target = $target . '/doctrine';
+        
+        if (!is_dir($target)) {
+            $output->writeln('Document Landing SDK: Creating Doctrine Directory');
+            mkdir($target, 0777, true);
+        }
+        else {
+            $output->writeln('Document Landing SDK: Doctrine Directory Already Exists');
+        }
+
+        chmod($target, 0777);
+
+        /**
+         * Symlink Translations Folder
+         */
+
+        $target = $appDir . '/Resources/DocumentLanding/SdkBundle/Resources/translations';
+        $symlink = $bundleDir . '/../Resources/translations';
+        
+        if (!is_dir($target)) {
+            $output->writeln('Document Landing SDK: Creating Translations Target Directory');
+            mkdir($target, 0777, true);
+        }
+        else {
+            $output->writeln('Document Landing SDK: Target Translations Directory Already Exists');
+        }
+        
+        if (!is_link($symlink)) {
+            $output->writeln('Document Landing SDK: Creating Translations Symlink');
+            @symlink($target, $symlink);
+        }
+        else {
+            $output->writeln('Document Landing SDK: Translations Symlink Already Exists');
+        }
+
+        chmod($symlink, 0777);
 
 
     }

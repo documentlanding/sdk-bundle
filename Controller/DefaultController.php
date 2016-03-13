@@ -56,16 +56,16 @@ class DefaultController extends Controller
           max-width: 450px;
         }
         .header {
-	      font-size: 24px;
-	      background-color: #0d9cd8;
-	      padding: 15px;
-	    }
-	    .content {
-		  padding:25px;
-		  font-family: "Roboto", sans-serif;
+          font-size: 24px;
+          background-color: #0d9cd8;
+          padding: 15px;
+        }
+        .content {
+          padding:25px;
+          font-family: "Roboto", sans-serif;
           font-weight: 300;
           color: #444;
-		}
+        }
         </style>
         </head>
         <body>
@@ -84,7 +84,7 @@ class DefaultController extends Controller
               </span>
             </a>
           </div>
-		  
+          
           <div class="content">
             <h1>SDK is Configured</h1>
             <p>A Lead Class has been generated from default settings. This can be modified via the API.</p>
@@ -104,26 +104,26 @@ class DefaultController extends Controller
     public function createOrUpdateLeadAction(Request $request)
     {
 
-	    $this->isAuthenticated($request);
-	    $remoteTest = $request->query->get('test_webhook');
-	    $testPopulatedLead = $request->query->get('test_populated_lead');
-	    
-	    // For the present, the test from Document Landing only ensures that this endpoint is functional.
-	    // Passing a fake-but-valid Lead object isn't presently a priority.
-	    // If/When that changes, Document Landing will include a test_populated_lead=1 query parameter.
-	    // Further in this method, code is included to prevent such a development from saving test data.
-	    if ($remoteTest && !$testPopulatedLead) {
-		    return new JsonResponse(array(
-			    'test' => array(
-				    'id' => 'createOrUpdateLead',
-				    'success' => true
-			    )
-		    ));
-	    }
+        $this->isAuthenticated($request);
+        $remoteTest = $request->query->get('test_webhook');
+        $testPopulatedLead = $request->query->get('test_populated_lead');
+        
+        // For the present, the test from Document Landing only ensures that this endpoint is functional.
+        // Passing a fake-but-valid Lead object isn't presently a priority.
+        // If/When that changes, Document Landing will include a test_populated_lead=1 query parameter.
+        // Further in this method, code is included to prevent such a development from saving test data.
+        if ($remoteTest && !$testPopulatedLead) {
+            return new JsonResponse(array(
+                'test' => array(
+                    'id' => 'createOrUpdateLead',
+                    'success' => true
+                )
+            ));
+        }
                 
         $sdkManager = $this->container->get('documentlanding.sdk_manager');
-	    $leadClass = $sdkManager->getLeadClass();
-	    $dispatcher = $this->container->get('event_dispatcher');
+        $leadClass = $sdkManager->getLeadClass();
+        $dispatcher = $this->container->get('event_dispatcher');
         
         $entityManager = $this->container->get('doctrine')->getEntityManager();
         $repository = $entityManager->getRepository($leadClass);
@@ -145,58 +145,58 @@ class DefaultController extends Controller
 
         if (!isset($data['Id'])){
 
-	        $missingRequired = false;
-	        $fieldMappings = $this->getFieldMappings($leadClass);
+            $missingRequired = false;
+            $fieldMappings = $this->getFieldMappings($leadClass);
 
             foreach ($fieldMappings as $key=>$value){
-	            if ($key == 'id') {
-		            continue;
-	            }
-	            if (isset($value['nullable']) && $value['nullable'] === false) {
-		            if (!$accessor->getValue($lead, $key)) {
-			            $missingRequired = true;
-			            break;
-		            }
-	            }
+                if ($key == 'id') {
+                    continue;
+                }
+                if (isset($value['nullable']) && $value['nullable'] === false) {
+                    if (!$accessor->getValue($lead, $key)) {
+                        $missingRequired = true;
+                        break;
+                    }
+                }
             }
             if (!$missingRequired) {
-	            $event = new LoadLeadEvent($request);
-	            $dispatcher->dispatch(DocumentLandingSdkBundleEvents::LOAD_LEAD, $event);
-	            $existingLead = $this->loadLeadFromSearchCriteria($event, $data);
-		        if ($existingLead) {
-			        $data['Id'] = $existingLead->getId();
-		        }
-	            else {	            
-		            if (!$remoteTest) {
-			            $entityManager->persist($lead);
+                $event = new LoadLeadEvent($request);
+                $dispatcher->dispatch(DocumentLandingSdkBundleEvents::LOAD_LEAD, $event);
+                $existingLead = $this->loadLeadFromSearchCriteria($event, $data);
+                if ($existingLead) {
+                    $data['Id'] = $existingLead->getId();
+                }
+                else {              
+                    if (!$remoteTest) {
+                        $entityManager->persist($lead);
                         $entityManager->flush();
-		            }
+                    }
                     $data['Id'] = $lead->getId();
-	                $event = new NewLeadEvent($lead, $data);
+                    $event = new NewLeadEvent($lead, $data);
                     $dispatcher->dispatch(DocumentLandingSdkBundleEvents::NEW_LEAD, $event);
-                }	 
+                }    
             }
             else {
-	            $data['error'] = 'MISSING REQUIRED FIELDS';
+                $data['error'] = 'MISSING REQUIRED FIELDS';
             }
         }
 
         if (isset($data['Id'])){
-	        $existingLead = $repository->findOneById($data['Id']);
-	        if ($existingLead) {
-		        $lead = $existingLead;
-	        }
-	        else {
-		        // Presuming lead was removed locally that is still being tracked by Document Landing.
-		        // Don't remove local data.  Use IsDeleted or similar.
-		        return new JsonResponse($data);
-	        }
+            $existingLead = $repository->findOneById($data['Id']);
+            if ($existingLead) {
+                $lead = $existingLead;
+            }
+            else {
+                // Presuming lead was removed locally that is still being tracked by Document Landing.
+                // Don't remove local data.  Use IsDeleted or similar.
+                return new JsonResponse($data);
+            }
 
-		    // Merge.
-		    foreach ($data['Lead'] as $key=>$value) {
-			    if (empty($value)) {
-				    continue;
-			    }
+            // Merge.
+            foreach ($data['Lead'] as $key=>$value) {
+                if (empty($value)) {
+                    continue;
+                }
                 if ($accessor->isWritable($lead, $key)) {
                     $accessor->setValue($lead, $key, $value);
                 }
@@ -220,30 +220,30 @@ class DefaultController extends Controller
     public function loadLeadAction(Request $request)
     {
 
-	    $this->isAuthenticated($request);
-	    $response = array();
-	    $remoteTest = $request->query->get('test_webhook');
+        $this->isAuthenticated($request);
+        $response = array();
+        $remoteTest = $request->query->get('test_webhook');
 
-	    if ($remoteTest) {
-		    return new JsonResponse(array(
-			    'test' => array(
-				    'id' => 'loadLead',
-				    'success' => true
-			    )
-		    ));
-	    }
+        if ($remoteTest) {
+            return new JsonResponse(array(
+                'test' => array(
+                    'id' => 'loadLead',
+                    'success' => true
+                )
+            ));
+        }
 
-	    $dispatcher = $this->container->get('event_dispatcher');
-	    $event = new LoadLeadEvent($request);
-	    $dispatcher->dispatch(DocumentLandingSdkBundleEvents::LOAD_LEAD, $event);
+        $dispatcher = $this->container->get('event_dispatcher');
+        $event = new LoadLeadEvent($request);
+        $dispatcher->dispatch(DocumentLandingSdkBundleEvents::LOAD_LEAD, $event);
         $lead = $this->loadLeadFromSearchCriteria($event);
-		if ($lead) {
-		    $response['Id'] = $lead->getId();
-		}
-	    if (isset($response['Id'])){
+        if ($lead) {
+            $response['Id'] = $lead->getId();
+        }
+        if (isset($response['Id'])){
             $accessor = PropertyAccess::createPropertyAccessor();
-		    $response['Lead'] = $this->convertLeadToArray($lead, $accessor);
-		}
+            $response['Lead'] = $this->convertLeadToArray($lead, $accessor);
+        }
         return new JsonResponse($response);
     }
 
@@ -253,66 +253,66 @@ class DefaultController extends Controller
      */
     public function loadFieldsAction(Request $request)
     {
-	    
-	    $this->isAuthenticated($request);
-	    
+        
+        $this->isAuthenticated($request);
+        
         $sdkManager = $this->container->get('documentlanding.sdk_manager');
-	    $leadClass = $sdkManager->getLeadClass();
+        $leadClass = $sdkManager->getLeadClass();
         $fieldConstraints = $this->getConstraints($leadClass);
         $fields = array();
         $lead = new $leadClass();
         $props = $this->getLeadProperties($lead);
 
         $accessor = PropertyAccess::createPropertyAccessor();
-	    
-	    foreach($props as $prop) {
+        
+        foreach($props as $prop) {
 
-		    $name = $prop->getName();
+            $name = $prop->getName();
 
-            $field = array();	
+            $field = array();   
             $field['name'] = $name;
-	        $field['type'] = null;
-	        
-	        $nameMetadata = $this->getFieldMappingsByName($leadClass, $name);
+            $field['type'] = null;
+            
+            $nameMetadata = $this->getFieldMappingsByName($leadClass, $name);
 
-	        $field['length'] = $nameMetadata['length'];
-	        $field['nillable'] = ($nameMetadata['nullable'] ? 1 : 0);
-	        $field_type = $nameMetadata['type'];
+            $field['length'] = $nameMetadata['length'];
+            $field['nillable'] = ($nameMetadata['nullable'] ? 1 : 0);
+            $field_type = $nameMetadata['type'];
 
-	        $field['type'] = $field_type;
+            $field['type'] = $field_type;
             
             switch($field_type){
-	            case "integer":
-	                $field['type'] = 'number';
-	                break;
-	            case "string":
-	                if ($field['length'] > 60) {
-		                $field['type'] = 'textarea';
-	                }
-	                else {
-		                $field['type'] = 'string';
-	                }
-	                break;
-	            case "boolean":
-	                $field['type'] = 'boolean';
-	                $field['length'] = 0;
-	                break;
+                case "integer":
+                    $field['type'] = 'number';
+                    break;
+                case "string":
+                    if ($field['length'] > 60) {
+                        $field['type'] = 'textarea';
+                    }
+                    else {
+                        $field['type'] = 'string';
+                    }
+                    break;
+                case "boolean":
+                    $field['type'] = 'boolean';
+                    $field['length'] = 0;
+                    break;
             }
 
             if (isset($fieldConstraints[$name])) {
-	            $a = $fieldConstraints[$name];
-	            if (isset($a['Email'])) {
-		            $field['type'] = 'email';
-	            }
-	            elseif (isset($a['Choice'])) {
-		            $options = array();
-		            $choice = $a['Choice'];
+                $a = $fieldConstraints[$name];
+                if (isset($a['Email'])) {
+                    $field['type'] = 'email';
+                }
+                elseif (isset($a['Choice'])) {
+                    $options = array();
+                    $choice = $a['Choice'];
 
-		            $labelIsValue = true;
-		            if ($this->is_assoc($choice->choices)) {
-			            $labelIsValue = false;
-		            }
-		            foreach($choice->choices as $option_val=>$option_label) {
+                    $labelIsValue = true;
+                    if ($this->is_assoc($choice->choices)) {
+                        $labelIsValue = false;
+                    }
+                    foreach($choice->choices as $option_val=>$option_label) {
                         $options[] = array(
                             'active' => 1,
                             'defaultValue' => '', // Unsupported (8/4/2015) 
@@ -322,21 +322,21 @@ class DefaultController extends Controller
                     }
                     $field['picklistValues'] = $options;
                     $field['type'] = ($choice->multiple ? 'multipicklist' : 'picklist');
-	            }
+                }
             }
 
             if (!$field['type']) {
-	            continue;
+                continue;
             }
             
             
             
             $field['label'] = $this->getLabel($name);
 
-	        $defaultValue = $accessor->getValue($lead, $name);
-	        $field['defaultValue'] = ($defaultValue ? $defaultValue : '');
+            $defaultValue = $accessor->getValue($lead, $name);
+            $field['defaultValue'] = ($defaultValue ? $defaultValue : '');
 
-	        $fields[] = $field;
+            $fields[] = $field;
             
         }
 
@@ -353,7 +353,7 @@ class DefaultController extends Controller
      */
     public function setLeadSchemaAction(Request $request)
     {
-	    
+        
         $content = $request->getContent();
         
         if (!empty($content)) {
@@ -363,7 +363,7 @@ class DefaultController extends Controller
         $this->isAuthenticated($request, $data);
 
         $event = new PreUpdateSchemaEvent($request);
-        $dispatcher->dispatch(DocumentLandingSdkBundleEvents::PRE_UPDATE_SCHEMA, $event);	        
+        $dispatcher->dispatch(DocumentLandingSdkBundleEvents::PRE_UPDATE_SCHEMA, $event);           
 
         if ($event->getError() !== null) {
             $error = $event->getError();
@@ -375,7 +375,7 @@ class DefaultController extends Controller
 
         return new JsonResponse($result);
 
-	}
+    }
 
     /**
      * Put together the validations for the Lead Entity.
@@ -417,14 +417,14 @@ class DefaultController extends Controller
     
     private function getFieldMappings($class) {
         if (!$this->entityMetadata) {
-		    $this->entityMetadata = $this->container->get('doctrine')->getEntityManager()->getClassMetadata($class);
-	    }
-	    return $this->entityMetadata->fieldMappings;
+            $this->entityMetadata = $this->container->get('doctrine')->getEntityManager()->getClassMetadata($class);
+        }
+        return $this->entityMetadata->fieldMappings;
     }
     
     private function getFieldMappingsByName($class, $name)
     {
-	    $fieldMappings = $this->getFieldMappings($class);
+        $fieldMappings = $this->getFieldMappings($class);
         return $fieldMappings[$name];
     }
     
@@ -461,31 +461,31 @@ class DefaultController extends Controller
 
     private function convertLeadToArray($lead, $accessor)
     {
-	    $props = $this->getLeadProperties($lead);
-	    $leadAsArray = array();
-	    foreach($props as $prop) {
-		    $name = $prop->getName();
-		    $leadAsArray[$name] = $accessor->getValue($lead, $name);
-		}
-	    return $leadAsArray;
+        $props = $this->getLeadProperties($lead);
+        $leadAsArray = array();
+        foreach($props as $prop) {
+            $name = $prop->getName();
+            $leadAsArray[$name] = $accessor->getValue($lead, $name);
+        }
+        return $leadAsArray;
     }
 
     private function getLeadProperties($lead)
     {
-	    $reflect = new \ReflectionClass($lead);
-	    $props = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
-	    return $props;
+        $reflect = new \ReflectionClass($lead);
+        $props = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
+        return $props;
     }
     
     private function getLabel($name)
     {
-	    $sdkManager = $this->container->get('documentlanding.sdk_manager');
+        $sdkManager = $this->container->get('documentlanding.sdk_manager');
         $translationId = 'lead.' . $name;
-	    $label = $this->container->get('translator')->trans($translationId, array(), $sdkManager->getBundleName());
-	    if ($label == $translationId) {
-		    $label = $this->splitCamelCase($name);
-	    }
-	    return $label;
+        $label = $this->container->get('translator')->trans($translationId, array(), $sdkManager->getBundleName());
+        if ($label == $translationId) {
+            $label = $this->splitCamelCase($name);
+        }
+        return $label;
     }
     
     private function is_assoc(array $array) {
@@ -501,17 +501,17 @@ class DefaultController extends Controller
      */
     private function isAuthenticated(Request $request, $data = null)
     {
-	    $event = new ApiRequestEvent($request);
+        $event = new ApiRequestEvent($request);
         $config = $this->container->getParameter('DocumentLandingSdkBundleConfig');
         
         if (!$data) {
-	        $data = $request->query->all();
+            $data = $request->query->all();
         }
 
         if (!isset($data['api_key']) || $data['api_key'] != $config['api_key']) {
-    	    $event->setIsValid(false);
+            $event->setIsValid(false);
         }
-	    $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher = $this->container->get('event_dispatcher');
         $dispatcher->dispatch(DocumentLandingSdkBundleEvents::API_REQUEST, $event);
         if (!$event->getIsValid()) {
             throw new HttpException(403, "Forbidden Request, Check API Key");

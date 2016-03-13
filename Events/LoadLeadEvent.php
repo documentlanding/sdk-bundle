@@ -17,14 +17,14 @@ class LoadLeadEvent extends Event
     }
     
     public function getRequest() {
-	    return $this->request;
+        return $this->request;
     }
 
     public function setSearchCriteria($searchCriteria)
     {
-	    if (is_array($searchCriteria)) {
-		    $this->searchCriteria = $searchCriteria;   
-	    }
+        if (is_array($searchCriteria)) {
+            $this->searchCriteria = $searchCriteria;   
+        }
     }
     
     public function getSearchCriteria()
