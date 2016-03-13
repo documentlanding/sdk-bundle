@@ -25,9 +25,12 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 	    $container = $this->getContainer();
-	    $appDir = $input->getArgument('app_dir');
+//	    $appDir = $input->getArgument('app_dir');
 	    $bundleDir = $input->getArgument('bundle_dir');
 	    $setupAcl = $input->getArgument('setup_acl');
+
+        // Symlinks don't work right with absolute path.  Don't know why.
+	    $appDir = $container->get('kernel')->getRootDir();
 
 	    // $setupAcl is presently unimplemented.
 	    // Will wait for client demand or additional input to make the case.
@@ -39,8 +42,8 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
 	     * Symlink Entity Folder
 	     */
 
-	    $target = $appDir . '/Resources/DocumentLanding/sdk-bundle/Entity';
-	    $symlink = $bundleDir . '/Entity';
+	    $target = $appDir . '/Resources/DocumentLanding/SdkBundle/Entity';
+	    $symlink = $bundleDir . '/../Entity';
 	     
 	    if (!is_dir($target)) {
 		    $output->writeln('Document Landing SDK: Creating Entity Target Directory');
@@ -50,38 +53,83 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
 			$output->writeln('Document Landing SDK: Target Entity Directory Already Exists');
 		}
 
-	    if (!is_dir($symlink) && !is_link($symlink)) {
+	    if (!is_link($symlink)) {
 		    $output->writeln('Creating Document Landing SDK Entity Symlink');
-		    symlink($target, $symlink);
+		    @symlink($target, $symlink);
 	    }
 	    else {
 		    $output->writeln('Document Landing SDK: Entity Symlink Already Exists');
 	    }
 
+	    chmod($symlink, 0777);
+
 
         /**
-	     * Symlink Doctrine Folder
+	     * Symlink Config Folder
 	     */
 
-	    $target = $appDir . '/Resources/DocumentLanding/sdk-bundle/Resources/config/doctrine';
-	    $symlink = $bundleDir . '/Resources/config/doctrine';
+	    $target = $appDir . '/Resources/DocumentLanding/SdkBundle/Resources/config';
+	    $symlink = $bundleDir . '/../Resources/config';
 	    
 	    if (!is_dir($target)) {
-		    $output->writeln('Document Landing SDK: Creating Doctrine Target Directory');
+		    $output->writeln('Document Landing SDK: Creating Config Target Directory');
 		    mkdir($target, 0777, true);
 		}
 		else {
-			$output->writeln('Document Landing SDK: Target Doctrine Directory Already Exists');
+			$output->writeln('Document Landing SDK: Target Config Directory Already Exists');
 		}
 		
-
 	    if (!is_link($symlink)) {
-		    $output->writeln('Creating Document Landing SDK Doctrine Symlink');
+		    $output->writeln('Document Landing SDK: Creating Config Symlink');
 		    symlink($target, $symlink);
 	    }
 	    else {
-		    $output->writeln('Document Landing SDK: Doctrine Symlink Already Exists');
+		    $output->writeln('Document Landing SDK: Config Symlink Already Exists');
 	    }
+
+	    chmod($symlink, 0777);
+
+        /**
+	     * Add Doctrine to Config Folder
+	     */
+	    
+	    $target = $target . '/doctrine';
+	    
+	    if (!is_dir($target)) {
+		    $output->writeln('Document Landing SDK: Creating Doctrine Directory');
+		    mkdir($target, 0777, true);
+		}
+		else {
+			$output->writeln('Document Landing SDK: Doctrine Directory Already Exists');
+		}
+
+	    chmod($target, 0777);
+
+        /**
+	     * Symlink Translations Folder
+	     */
+
+	    $target = $appDir . '/Resources/DocumentLanding/SdkBundle/Resources/translations';
+	    $symlink = $bundleDir . '/../Resources/translations';
+	    
+	    if (!is_dir($target)) {
+		    $output->writeln('Document Landing SDK: Creating Translations Target Directory');
+		    mkdir($target, 0777, true);
+		}
+		else {
+			$output->writeln('Document Landing SDK: Target Translations Directory Already Exists');
+		}
+		
+	    if (!is_link($symlink)) {
+		    $output->writeln('Creating Document Landing SDK Translations Symlink');
+		    @symlink($target, $symlink);
+	    }
+	    else {
+		    $output->writeln('Document Landing SDK: Translations Symlink Already Exists');
+	    }
+
+	    chmod($symlink, 0777);
+
 
     }
 

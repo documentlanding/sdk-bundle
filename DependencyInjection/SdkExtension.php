@@ -22,7 +22,7 @@ class SdkExtension extends Extension
         $container->setParameter('DocumentLandingSdkBundleConfig', $config);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__));
-        $loader->load('../Resources/config/services.yml'); 
+        $loader->load('../Resources/init/services.yml'); 
     }
 
 }

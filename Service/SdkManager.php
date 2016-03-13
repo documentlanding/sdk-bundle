@@ -64,19 +64,19 @@ class SdkManager
             );
             
             $entity_dir = __DIR__ . '/../Entity';
-            if (!is_dir($entity_dir) && !is_link($entity_dir)) {
-                mkdir($entity_dir, 0775, true);
-            }
+//            if (!is_dir($entity_dir) && !is_link($entity_dir)) {
+//                mkdir($entity_dir, 0775, true);
+//            }
             
             foreach ($array as $key=>$value) {
                 $src_dir = dirname($value['src']);
                 $dst_dir = dirname($value['dst']);
-                if (!is_dir($src_dir)) {
-                    mkdir($src_dir, 0775, true);
-                }
-                if (!is_dir($dst_dir)) {
-                    mkdir($dst_dir, 0775, true);
-                }
+//                if (!is_dir($src_dir)) {
+//                    mkdir($src_dir, 0775, true);
+//                }
+//                if (!is_dir($dst_dir)) {
+//                    mkdir($dst_dir, 0775, true);
+//                }
                 if (!copy($value['src'], $value['dst'])) {
                     return array('success' => false, 'error' => 'Failed to write Lead Entity and/or metadata files.');
                 }
@@ -281,7 +281,7 @@ class SdkManager
 	        return array('success' => false, 'error' => $process->getErrorOutput());
         }
 
-        $command = $base . 'generate:doctrine:entities ' . $this->getBundleName();
+        $command = $base . 'generate:doctrine:entities DocumentLanding/' . $this->getBundleName() . ' --path ' . $this->rootDir . '/Resources';
         $process = new Process($command);
         $process->run();
         if (!$process->isSuccessful()) {
