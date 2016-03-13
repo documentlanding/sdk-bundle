@@ -2,7 +2,7 @@
 	
 namespace DocumentLanding\SdkBundle\Service;
 
-use DocumentLanding\SdkBundle\SdkBundleEvents;
+use DocumentLanding\SdkBundle\DocumentLandingSdkBundleEvents;
 use DocumentLanding\SdkBundle\Events\PostUpdateSchemaEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Dumper;
@@ -354,7 +354,7 @@ class SdkManager
         }
 
         $event = new PostUpdateSchemaEvent($leadClass);
-        $this->eventDispatcher->dispatch(SdkBundleEvents::POST_UPDATE_SCHEMA, $event);
+        $this->eventDispatcher->dispatch(DocumentLandingSdkBundleEvents::POST_UPDATE_SCHEMA, $event);
         
         return array('success' => true);
 

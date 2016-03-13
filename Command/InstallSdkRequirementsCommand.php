@@ -121,7 +121,7 @@ class InstallSdkRequirementsCommand extends ContainerAwareCommand
 		}
 		
 	    if (!is_link($symlink)) {
-		    $output->writeln('Creating Document Landing SDK Translations Symlink');
+		    $output->writeln('Document Landing SDK: Creating Translations Symlink');
 		    @symlink($target, $symlink);
 	    }
 	    else {
