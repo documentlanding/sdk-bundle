@@ -6,6 +6,7 @@ use DocumentLanding\SdkBundle\DocumentLandingSdkBundleEvents;
 use DocumentLanding\SdkBundle\Events\NewLeadEvent;
 use DocumentLanding\SdkBundle\Events\UpdatedLeadEvent;
 use DocumentLanding\SdkBundle\Events\ApiRequestEvent;
+use DocumentLanding\SdkBundle\Events\RefreshTokenEvent;
 use DocumentLanding\SdkBundle\Events\LoadLeadEvent;
 use DocumentLanding\SdkBundle\Events\PreUpdateSchemaEvent;
 use DocumentLanding\SdkBundle\Events\PostUpdateSchemaEvent;
@@ -32,70 +33,45 @@ class DefaultController extends Controller
      */
     public function configSuccessAction(Request $request)
     {
-        return new Response('<html>
-        <head>
-        <title>Site Configured</title>
-        <link href="//fonts.googleapis.com/css?family=Oswald:400|Roboto:300" rel="stylesheet" type="text/css" />
-        <link type="text/css" rel="stylesheet" href="http://documentlanding.com/css/logo.css" />
-        <style type="text/css">
-        body{ 
-          background-color:#e1e1e1;
-        }
-        h1 {
-          font-family: "Oswald",sans-serif;
-          font-weight: 400;
-          line-height: 44px;
-          font-size: 36px;
-          letter-spacing: .7px;
-          margin-top: 0px;
-        }
-        .site { 
-          margin: 15px auto;
-          background-color:#fff;
-          border: 2px solid #ccc;
-          max-width: 450px;
-        }
-        .header {
-          font-size: 24px;
-          background-color: #0d9cd8;
-          padding: 15px;
-        }
-        .content {
-          padding:25px;
-          font-family: "Roboto", sans-serif;
-          font-weight: 300;
-          color: #444;
-        }
-        </style>
-        </head>
-        <body>
-        <div class="site">
-
-          <div class="header">
-            <a id="header-logo" href="http://documentlanding.com/" class="logo-style-2">
-              <span class="documentlanding-logo">
-                <span class="dl-1"></span>
-                <span class="dl-2"></span>
-                <span class="dl-3"></span>
-                <span class="dl-4"></span>
-                <span class="dl-5"></span>
-                <span class="dl-6"></span>
-                <span class="text-horizontal"></span>
-              </span>
-            </a>
-          </div>
-          
-          <div class="content">
-            <h1>SDK is Configured</h1>
-            <p>A Lead Class has been generated from default settings. This can be modified via the API.</p>
-            <p>Alternatively, you can also change configuration settings to use a static Entity contained within another Bundle.</p>
-          </div>
-
-        </div>
-
-        </body>
-        </html>');
+        return $this->render('SdkBundle:Setup:confirmed.html.twig');
     }
+
+    /**
+     * @Route("/oauth/token", name="oauth_token")
+     * @Method({"POST"})
+     */
+    public function oauthTokenAction(Request $request)
+    {
+	    $statusCode = 200;
+	    $responseData = array();
+        $data = array();
+        $content = $request->getContent();
+
+        if (!empty($content)) {
+            $data = json_decode($content, true);
+            if (!isset($data['refresh_token'])) {
+	            $statusCode = 422;
+            }
+            else {
+                if ($config['access_token']) {
+	                return $config['access_token'];
+                }
+                else {
+	                $event = new RefreshTokenEvent($request);
+                    $dispatcher = $this->container->get('event_dispatcher');
+                    $dispatcher->dispatch(DocumentLandingSdkBundleEvents::REFRESH_TOKEN_REQUEST, $event);
+                }
+            }
+        }
+        else {
+	        $statusCode = 400;
+        }
+
+        $response = new JsonResponse($responseData);
+        $response->setStatusCode($statusCode);
+
+        return $response;
+	}
 
     /**
      * @Route("/api/lead/create-or-update", name="create_or_update_lead")
@@ -103,7 +79,6 @@ class DefaultController extends Controller
      */
     public function createOrUpdateLeadAction(Request $request)
     {
-
         $this->isAuthenticated($request);
         $remoteTest = $request->query->get('test_webhook');
         $testPopulatedLead = $request->query->get('test_populated_lead');
@@ -125,7 +100,7 @@ class DefaultController extends Controller
         $leadClass = $sdkManager->getLeadClass();
         $dispatcher = $this->container->get('event_dispatcher');
         
-        $entityManager = $this->container->get('doctrine')->getEntityManager();
+        $entityManager = $this->container->get('doctrine')->getManager();
         $repository = $entityManager->getRepository($leadClass);
         $accessor = PropertyAccess::createPropertyAccessor();
         $lead = new $leadClass();
@@ -143,7 +118,7 @@ class DefaultController extends Controller
             }
         }
 
-        if (!isset($data['Id'])){
+        if (!isset($data['id'])){
 
             $missingRequired = false;
             $fieldMappings = $this->getFieldMappings($leadClass);
@@ -164,14 +139,14 @@ class DefaultController extends Controller
                 $dispatcher->dispatch(DocumentLandingSdkBundleEvents::LOAD_LEAD, $event);
                 $existingLead = $this->loadLeadFromSearchCriteria($event, $data);
                 if ($existingLead) {
-                    $data['Id'] = $existingLead->getId();
+                    $data['id'] = $existingLead->getId();
                 }
                 else {              
                     if (!$remoteTest) {
                         $entityManager->persist($lead);
                         $entityManager->flush();
                     }
-                    $data['Id'] = $lead->getId();
+                    $data['id'] = $lead->getId();
                     $event = new NewLeadEvent($lead, $data);
                     $dispatcher->dispatch(DocumentLandingSdkBundleEvents::NEW_LEAD, $event);
                 }    
@@ -181,8 +156,8 @@ class DefaultController extends Controller
             }
         }
 
-        if (isset($data['Id'])){
-            $existingLead = $repository->findOneById($data['Id']);
+        if (isset($data['id'])){
+            $existingLead = $repository->findOneById($data['id']);
             if ($existingLead) {
                 $lead = $existingLead;
             }
@@ -238,9 +213,9 @@ class DefaultController extends Controller
         $dispatcher->dispatch(DocumentLandingSdkBundleEvents::LOAD_LEAD, $event);
         $lead = $this->loadLeadFromSearchCriteria($event);
         if ($lead) {
-            $response['Id'] = $lead->getId();
+            $response['id'] = $lead->getId();
         }
-        if (isset($response['Id'])){
+        if (isset($response['id'])){
             $accessor = PropertyAccess::createPropertyAccessor();
             $response['Lead'] = $this->convertLeadToArray($lead, $accessor);
         }
@@ -253,7 +228,6 @@ class DefaultController extends Controller
      */
     public function loadFieldsAction(Request $request)
     {
-        
         $this->isAuthenticated($request);
         
         $sdkManager = $this->container->get('documentlanding.sdk_manager');
@@ -353,6 +327,7 @@ class DefaultController extends Controller
      */
     public function setLeadSchemaAction(Request $request)
     {
+        $this->isAuthenticated($request);
         
         $content = $request->getContent();
         
@@ -360,8 +335,6 @@ class DefaultController extends Controller
             $data = json_decode($content, true);
         }
         
-        $this->isAuthenticated($request, $data);
-
         $event = new PreUpdateSchemaEvent($request);
         $dispatcher->dispatch(DocumentLandingSdkBundleEvents::PRE_UPDATE_SCHEMA, $event);           
 
@@ -503,18 +476,24 @@ class DefaultController extends Controller
     {
         $event = new ApiRequestEvent($request);
         $config = $this->container->getParameter('DocumentLandingSdkBundleConfig');
-        
-        if (!$data) {
-            $data = $request->query->all();
-        }
+        $authorizationHeader = $request->headers->get('Authorization');
 
-        if (!isset($data['api_key']) || $data['api_key'] != $config['api_key']) {
+        if (!$authorizationHeader) {
             $event->setIsValid(false);
         }
+        else {
+	        // See DocumentLandingSdkBundleEvents.php for more about this.
+	        if ($config['access_token']) {
+		        if ($authorizationHeader != 'Bearer ' . $config['access_token']) {
+		            $event->setIsValid(false);
+	            }
+	        }
+        }
+        
         $dispatcher = $this->container->get('event_dispatcher');
         $dispatcher->dispatch(DocumentLandingSdkBundleEvents::API_REQUEST, $event);
         if (!$event->getIsValid()) {
-            throw new HttpException(403, "Forbidden Request, Check API Key");
+            throw new HttpException(401, "INVALID_SESSION_ID", "Session expired or invalid");
         }
     }
 

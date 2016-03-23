@@ -14,7 +14,8 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-               ->scalarNode('api_key')->defaultValue('ChangeThis')->end()
+               ->scalarNode('access_token')->defaultValue(null)->end()
+               ->scalarNode('refresh_token')->end()
                ->scalarNode('lead_class')->end()
                ->scalarNode('lead_form_type')->end()
                ->scalarNode('receipt_email')->defaultValue(false)->end()

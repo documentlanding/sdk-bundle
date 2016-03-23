@@ -39,6 +39,28 @@ final class DocumentLandingSdkBundleEvents
     const API_REQUEST = 'documentlanding.api_request';
 
     /**
+     * documentlanding.refresh_token_request is sent upon receiving a refresh token
+     * request from Document Landing. This occurs approximately once an hour.
+     *
+     * If the developer sets an access_token in config.yml, that access_token
+     * will always be used. This is just fine.  The call to refresh will
+     * simply always return this value.
+     *
+     * Alternatively setting access_token to "~" in config.yml indicates the intention 
+     * to fully use RefreshTokenRequestEvent. With RefreshTokenRequestEvent, the developer
+     * attachs the "new" access_token in another Bundle, which is then returned to 
+     * Document Landing.
+     *
+     * Maximum length of the access_token is 255 characters.
+     *
+     * The event listener receives an
+     * DocumentLanding\SdkBundle\Event\RefreshTokenRequestEvent instance.
+     *
+     * @var string
+     */     
+    const REFRESH_TOKEN_REQUEST = 'documentlanding.refresh_token_request';
+
+    /**
      * documentlanding.load_lead is sent on each attempt to load a lead.
      * It is also sent on a new lead (no id) to ensure the email address isn't already captured.
      * Such a lead is switched from new to existing in the response.
