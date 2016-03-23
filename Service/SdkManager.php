@@ -262,18 +262,6 @@ class SdkManager
         $consolePath = $this->rootDir . '/console';
         $base = PHP_BINDIR . '/php ' . $consolePath . ' ';
         $env = $this->env;
-
-//        $command = $base . 'cache:clear --env=' . $env;
-//        $process = new Process($command);
-//        $process->run();
-//        if (!$process->isSuccessful()) {
-//          return array('success' => false, 'error' => $process->getErrorOutput());
-//        }
-  
- 
-
-        // Generate Entity
-
         $command = $base . 'cache:clear --env=' . $env;
         $process = new Process($command);
         $process->run();
@@ -355,6 +343,19 @@ class SdkManager
 
         $event = new PostUpdateSchemaEvent($leadClass);
         $this->eventDispatcher->dispatch(DocumentLandingSdkBundleEvents::POST_UPDATE_SCHEMA, $event);
+
+
+        // Clear Cache
+        
+        $consolePath = $this->rootDir . '/console';
+        $base = PHP_BINDIR . '/php ' . $consolePath . ' ';
+        $env = $this->env;
+        $command = $base . 'cache:clear --env=' . $env;
+        $process = new Process($command);
+        $process->run();
+        if (!$process->isSuccessful()) {
+            return array('success' => false, 'error' => $process->getErrorOutput());
+        }
         
         return array('success' => true);
 
