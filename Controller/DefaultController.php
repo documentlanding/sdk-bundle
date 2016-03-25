@@ -217,7 +217,7 @@ class DefaultController extends Controller
         }
         if (isset($response['id'])){
             $accessor = PropertyAccess::createPropertyAccessor();
-            $response['Lead'] = $this->convertLeadToArray($lead, $accessor);
+            $response = $this->convertLeadToArray($lead, $accessor);
         }
         return new JsonResponse($response);
     }
@@ -421,9 +421,9 @@ class DefaultController extends Controller
         $entityManager = $this->container->get('doctrine')->getEntityManager();
         $repository = $entityManager->getRepository($leadClass);
         $searchCriteria = $event->getSearchCriteria();
-        if (!$searchCriteria && isset($data) && isset($data['Lead']) && isset($data['Lead']['Email'])) {
+        if (!$searchCriteria && isset($data) && isset($data['Email'])) {
             $searchCriteria = array(
-                'Email' => $data['Lead']['Email']
+                'Email' => $data['Email']
             );
         }
         if ($searchCriteria) {
