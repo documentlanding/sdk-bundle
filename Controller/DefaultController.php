@@ -224,7 +224,7 @@ class DefaultController extends Controller
         }
         if (isset($response['id'])){
             $accessor = PropertyAccess::createPropertyAccessor();
-            $response = $this->convertLeadToArray($lead, $accessor);
+            $response['Lead'] = $this->convertLeadToArray($lead, $accessor);
         }
         return new JsonResponse($response);
     }
