@@ -428,9 +428,9 @@ class DefaultController extends Controller
         $entityManager = $this->container->get('doctrine')->getEntityManager();
         $repository = $entityManager->getRepository($leadClass);
         $searchCriteria = $event->getSearchCriteria();
-        if (!$searchCriteria && isset($data) && isset($data['Email'])) {
+        if (!$searchCriteria && isset($data) && isset($data['Lead']) && isset($data['Lead']['Email'])) {
             $searchCriteria = array(
-                'Email' => $data['Email']
+                'Email' => $data['Lead']['Email']
             );
         }
         if ($searchCriteria) {
