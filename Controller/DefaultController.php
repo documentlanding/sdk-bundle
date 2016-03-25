@@ -208,10 +208,17 @@ class DefaultController extends Controller
             ));
         }
 
+        $data = array();
+        $content = $request->getContent();
+    
+        if (!empty($content)) {
+            $data = json_decode($content, true);
+        }
+
         $dispatcher = $this->container->get('event_dispatcher');
         $event = new LoadLeadEvent($request);
         $dispatcher->dispatch(DocumentLandingSdkBundleEvents::LOAD_LEAD, $event);
-        $lead = $this->loadLeadFromSearchCriteria($event);
+        $lead = $this->loadLeadFromSearchCriteria($event, $data);
         if ($lead) {
             $response['id'] = $lead->getId();
         }
