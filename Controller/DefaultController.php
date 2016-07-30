@@ -42,36 +42,36 @@ class DefaultController extends Controller
      */
     public function oauthTokenAction(Request $request)
     {
-	    $statusCode = 200;
-	    $responseData = array();
+        $statusCode = 200;
+        $responseData = array();
         $data = array();
         $content = $request->getContent();
 
         if (!empty($content)) {
             $data = json_decode($content, true);
             if (!isset($data['refresh_token'])) {
-	            $statusCode = 422;
+                $statusCode = 422;
             }
             else {
                 if ($config['access_token']) {
-	                return $config['access_token'];
+                    return $config['access_token'];
                 }
                 else {
-	                $event = new RefreshTokenEvent($request);
+                    $event = new RefreshTokenEvent($request);
                     $dispatcher = $this->container->get('event_dispatcher');
                     $dispatcher->dispatch(DocumentLandingSdkBundleEvents::REFRESH_TOKEN_REQUEST, $event);
                 }
             }
         }
         else {
-	        $statusCode = 400;
+            $statusCode = 400;
         }
 
         $response = new JsonResponse($responseData);
         $response->setStatusCode($statusCode);
 
         return $response;
-	}
+    }
 
     /**
      * @Route("/api/lead/create-or-update", name="create_or_update_lead")
@@ -110,6 +110,11 @@ class DefaultController extends Controller
     
         if (!empty($content)) {
             $data = json_decode($content, true);
+        }
+
+        if (!isset($data['Lead'])){
+            $data['error'] = 'MISSING REQUIRED LEAD INDEX';
+            return new JsonResponse($data);
         }
 
         foreach ($data['Lead'] as $key=>$value) {
@@ -489,18 +494,18 @@ class DefaultController extends Controller
             $event->setIsValid(false);
         }
         else {
-	        // See DocumentLandingSdkBundleEvents.php for more about this.
-	        if ($config['access_token']) {
-		        if ($authorizationHeader != 'Bearer ' . $config['access_token']) {
-		            $event->setIsValid(false);
-	            }
-	        }
+            // See DocumentLandingSdkBundleEvents.php for more about this.
+            if ($config['access_token']) {
+                if ($authorizationHeader != 'Bearer ' . $config['access_token']) {
+                    $event->setIsValid(false);
+                }
+            }
         }
         
         $dispatcher = $this->container->get('event_dispatcher');
         $dispatcher->dispatch(DocumentLandingSdkBundleEvents::API_REQUEST, $event);
         if (!$event->getIsValid()) {
-            throw new HttpException(401, "INVALID_SESSION_ID", "Session expired or invalid");
+            throw new HttpException(401, "Session expired or invalid");
         }
     }
 
